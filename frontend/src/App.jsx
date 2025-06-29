@@ -345,7 +345,7 @@
 //     <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
 //         <div className="text-center">
 //             <Scale size={64} className="text-blue-500 mb-6 inline-block" />
-//             <h1 className="text-5xl font-bold text-white mb-4">NyayGPT</h1>
+//             <h1 className="text-5xl font-bold text-white mb-4">NayayGPT</h1>
 //             <p className="text-xl text-gray-400 mb-12">Your AI-Powered Legal Assistant</p>
 //             <button
 //                 onClick={onSignIn}
@@ -699,7 +699,7 @@ const LoginPage = ({ onSignIn, isLoading, error }) => (
             <div className="w-16 h-16 rounded-full flex items-center justify-center bg-gradient-to-br from-orange-500 via-white to-green-600 mb-6 mx-auto">
                  <Scale size={32} className="text-gray-800"/>
             </div>
-            <h1 className="text-4xl sm:text-5xl font-bold text-white mb-3">NyayGPT</h1>
+            <h1 className="text-4xl sm:text-5xl font-bold text-white mb-3">NayayGPT</h1>
             <p className="text-lg sm:text-xl text-gray-400 mb-8">Your AI-Powered Legal Assistant for India</p>
             <div className="flex justify-center">
                 <button
@@ -1003,7 +1003,7 @@ const ChatPage = ({ userId, onSignOut }) => {
                 <div className="flex items-center justify-between p-4 border-b border-white/10 shrink-0">
                     <div className="flex items-center gap-2">
                         <Scale size={24} className="text-orange-400"/>
-                        <h1 className="text-xl font-bold text-white">NyayGPT</h1>
+                        <h1 className="text-xl font-bold text-white">NayayGPT</h1>
                     </div>
                     <button onClick={() => setIsSidebarVisible(false)} className="p-1 rounded-full hover:bg-white/10 md:hidden"><X size={20}/></button>
                 </div>
@@ -1054,7 +1054,7 @@ const ChatPage = ({ userId, onSignOut }) => {
                     <button onClick={() => setIsSidebarVisible(true)} className="p-2 -ml-2"><Menu size={20} /></button>
                     <div className="flex items-center gap-2">
                         <Scale size={30} className="text-orange-400"/>
-                        <h1 className="text-2xl md:text-lg font-bold text-white">NyayGPT</h1>
+                        <h1 className="text-2xl md:text-lg font-bold text-white">NayayGPT</h1>
                     </div>
                      <div className="w-8"></div> {/* Spacer */}
                 </div>

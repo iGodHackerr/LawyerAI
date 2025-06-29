@@ -249,7 +249,7 @@ def chat_completions():
     try:
         intent = detect_intent(user_query)
         prompt = build_prompt(user_query, intent, legal_data, embedding_model, corpus_embeddings)
-        generation_config = genai.types.GenerationConfig(temperature=0.2, max_output_tokens=512)
+        generation_config = genai.types.GenerationConfig(temperature=0.2)
         response = gemini_model.generate_content(contents=prompt, generation_config=generation_config)
         ai_content = response.text.strip()
     except Exception as e:

@@ -599,7 +599,6 @@
 
 
 
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Plus, MessageSquare, LogIn, Send, User, Bot, Loader2, Menu, Sparkles, X, Code, BarChart, BookOpen, MoreHorizontal, Trash2, Scale } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -642,7 +641,7 @@ export default function App() {
         setIsLoggingIn(true);
         try {
             // Placeholder API call; replace with your actual authentication endpoint
-            const response = await fetch('http://127.0.0.1:5001/login', { method: 'POST' });
+            const response = await fetch('/api/login', { method: 'POST' });
             if (!response.ok) throw new Error('Login failed');
             const data = await response.json();
             localStorage.setItem('userId', data.userId);
@@ -780,7 +779,7 @@ const ChatPage = ({ userId, onSignOut }) => {
     // Fetch user's chat history
     useEffect(() => {
         if (!userId) return;
-        fetch(`http://127.0.0.1:5001/chats/${userId}`).then(res => res.json()).then(data => setChats(data.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)))).catch(err => console.error("Error fetching chats:", err));
+        fetch(`/api/chats/${userId}`).then(res => res.json()).then(data => setChats(data.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)))).catch(err => console.error("Error fetching chats:", err));
     }, [userId]);
 
     // Fetch messages for the currently selected chat
@@ -790,7 +789,7 @@ const ChatPage = ({ userId, onSignOut }) => {
             return;
         }
         setIsLoading(true);
-        fetch(`http://127.0.0.1:5001/chat/${currentChatId}/messages`).then(res => res.json()).then(setMessages).catch(err => console.error("Error fetching messages:", err)).finally(() => setIsLoading(false));
+        fetch(`/api/chat/${currentChatId}/messages`).then(res => res.json()).then(setMessages).catch(err => console.error("Error fetching messages:", err)).finally(() => setIsLoading(false));
     }, [currentChatId]);
     
     // Responsive sidebar visibility
@@ -814,7 +813,7 @@ const ChatPage = ({ userId, onSignOut }) => {
     // --- Core Chat Functions ---
     const handleNewChat = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:5001/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId }) });
+            const response = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId }) });
             const newChat = await response.json();
             setChats([newChat, ...chats]);
             setCurrentChatId(newChat._id);
@@ -826,7 +825,7 @@ const ChatPage = ({ userId, onSignOut }) => {
 
     const updateChatTitle = async (chatId) => {
         try {
-            const response = await fetch(`http://127.0.0.1:5001/chat/${chatId}/title`, { method: 'POST' });
+            const response = await fetch(`/api/chat/${chatId}/title`, { method: 'POST' });
             if (!response.ok) return;
             const { title } = await response.json();
             setChats(prev => prev.map(c => c._id === chatId ? { ...c, title } : c));
@@ -882,7 +881,7 @@ const ChatPage = ({ userId, onSignOut }) => {
         const originalChats = [...chats];
         setChats(prev => prev.filter(c => c._id !== chatIdToDelete));
         try {
-            await fetch(`http://127.0.0.1:5001/chat/${chatIdToDelete}`, { method: 'DELETE' });
+            await fetch(`/api/chat/${chatIdToDelete}`, { method: 'DELETE' });
             if (currentChatId === chatIdToDelete) {
                 setCurrentChatId(null);
                 setMessages([]);

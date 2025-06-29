@@ -599,10 +599,6 @@
 
 
 
-
-
-
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Plus, MessageSquare, LogIn, Send, User, Bot, Loader2, Menu, Sparkles, X, Code, BarChart, BookOpen, MoreHorizontal, Trash2, Scale, XCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -643,12 +639,12 @@ export default function App() {
     }, []);
 
     // Handles the user sign-in process
-    const handleSignIn = async () =>{
+    const handleSignIn = async () => {
         setIsLoggingIn(true);
         setLoginError(null); // Reset error on new attempt
         try {
             // Placeholder API call; replace with your actual authentication endpoint
-            const response = await fetch('/api/login', { method: 'POST' });
+            const response = await fetch('h/api/bis.live/login', { method: 'POST' });
             if (!response.ok) {
                 throw new Error('Login request failed. Please check the backend server.');
             }
@@ -794,7 +790,7 @@ const ChatPage = ({ userId, onSignOut }) => {
     useEffect(() => {
         if (!userId) return;
         setIsChatListLoading(true);
-        fetch(`/api/chats/${userId}`)
+        fetch(`h/api/bis.live/chats/${userId}`)
             .then(res => res.json())
             .then(data => setChats(data.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))))
             .catch(err => console.error("Error fetching chats:", err))
@@ -809,7 +805,7 @@ const ChatPage = ({ userId, onSignOut }) => {
         }
         setIsLoading(true);
         setMessageError(null);
-        fetch(`/api/chat/${currentChatId}/messages`)
+        fetch(`h/api/bis.live/chat/${currentChatId}/messages`)
             .then(res => {
                 if (!res.ok) throw new Error("Failed to load past messages for this chat.");
                 return res.json();
@@ -843,7 +839,7 @@ const ChatPage = ({ userId, onSignOut }) => {
     // --- Core Chat Functions ---
     const handleNewChat = async () => {
         try {
-            const response = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId }) });
+            const response = await fetch('h/api/bis.live/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId }) });
             const newChat = await response.json();
             setChats([newChat, ...chats]);
             setCurrentChatId(newChat._id);
@@ -855,7 +851,7 @@ const ChatPage = ({ userId, onSignOut }) => {
 
     const updateChatTitle = async (chatId) => {
         try {
-            const response = await fetch(`/api/chat/${chatId}/title`, { method: 'POST' });
+            const response = await fetch(`h/api/bis.live/chat/${chatId}/title`, { method: 'POST' });
             if (!response.ok) return;
             const { title } = await response.json();
             setChats(prev => prev.map(c => c._id === chatId ? { ...c, title } : c));
@@ -878,12 +874,12 @@ const ChatPage = ({ userId, onSignOut }) => {
         }
         
         const userMessage = { role: 'user', content };
-        setMessages(prev => [...prev, userMessage, { role: 'assistant', content: '' }]);
+        setMessages(prev => [...prev, userMessage]);
         setInput('');
         setIsLoading(true);
 
         try {
-            const response = await fetch(`/api/chat/${chatId}/message`, {
+            const response = await fetch(`h/api/bis.live/chat/${chatId}/message`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ content: content.trim() })
@@ -891,42 +887,15 @@ const ChatPage = ({ userId, onSignOut }) => {
 
             if (!response.ok) throw new Error(`Backend request failed with status: ${response.status}`);
 
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            let done = false;
-
-            while (!done) {
-                const { value, done: readerDone } = await reader.read();
-                done = readerDone;
-                const chunk = decoder.decode(value, { stream: !done });
-                
-                setMessages(prev => {
-                    const updatedMessages = [...prev];
-                    const lastMessage = updatedMessages[prev.length - 1];
-                    if (lastMessage && lastMessage.role === 'assistant') {
-                        updatedMessages[prev.length - 1] = {
-                            ...lastMessage,
-                            content: lastMessage.content + chunk
-                        };
-                        return updatedMessages;
-                    }
-                    return prev;
-                });
-            }
+            const assistantMessage = await response.json();
+            setMessages(prev => [...prev, assistantMessage]);
 
             if (isFirstMessage) updateChatTitle(chatId);
 
         } catch (error) {
             console.error("Error sending message:", error);
             setMessages(prev => {
-                 const updatedMessages = [...prev];
-                 const lastMessage = updatedMessages[prev.length - 1];
-                 if(lastMessage && lastMessage.role === 'assistant' && lastMessage.content === ''){
-                     updatedMessages[prev.length - 1] = { role: 'assistant', content: "I'm sorry, I encountered an error. Please try again." };
-                 } else {
-                     updatedMessages.push({ role: 'assistant', content: "I'm sorry, I encountered an error. Please try again." });
-                 }
-                 return updatedMessages;
+                 return [...prev, { role: 'assistant', content: "I'm sorry, I encountered an error. Please try again." }];
             });
         } finally {
             setIsLoading(false);
@@ -945,7 +914,7 @@ const ChatPage = ({ userId, onSignOut }) => {
         const originalChats = [...chats];
         setChats(prev => prev.filter(c => c._id !== chatIdToDelete));
         try {
-            await fetch(`/api/chat/${chatIdToDelete}`, { method: 'DELETE' });
+            await fetch(`h/api/bis.live/chat/${chatIdToDelete}`, { method: 'DELETE' });
             if (currentChatId === chatIdToDelete) {
                 setCurrentChatId(null);
                 setMessages([]);

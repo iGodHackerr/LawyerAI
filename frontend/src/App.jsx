@@ -599,8 +599,12 @@
 
 
 
+
+
+
+
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, MessageSquare, LogIn, Send, User, Bot, Loader2, Menu, Sparkles, X, Code, BarChart, BookOpen, MoreHorizontal, Trash2, Scale } from 'lucide-react';
+import { Plus, MessageSquare, LogIn, Send, User, Bot, Loader2, Menu, Sparkles, X, Code, BarChart, BookOpen, MoreHorizontal, Trash2, Scale, XCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 // --- Custom Styles for Animations ---
@@ -626,6 +630,8 @@ export default function App() {
     const [userId, setUserId] = useState(null);
     // Loading state for asynchronous operations like login
     const [isLoggingIn, setIsLoggingIn] = useState(true);
+    // State to hold login error messages
+    const [loginError, setLoginError] = useState(null);
 
     // Effect to check for an existing user session in localStorage on initial load
     useEffect(() => {
@@ -639,19 +645,23 @@ export default function App() {
     // Handles the user sign-in process
     const handleSignIn = async () => {
         setIsLoggingIn(true);
+        setLoginError(null); // Reset error on new attempt
         try {
             // Placeholder API call; replace with your actual authentication endpoint
             const response = await fetch('https://ai.noobis.live/login', { method: 'POST' });
-            if (!response.ok) throw new Error('Login failed');
+            if (!response.ok) {
+                throw new Error('Login request failed. Please check the backend server.');
+            }
             const data = await response.json();
-            localStorage.setItem('userId', data.userId);
-            setUserId(data.userId);
+            if (data.userId) {
+                localStorage.setItem('userId', data.userId);
+                setUserId(data.userId);
+            } else {
+                throw new Error('User ID not found in the server response.');
+            }
         } catch (error) {
             console.error("Authentication failed:", error);
-            // Fallback for demo purposes if API call fails
-            const mockUserId = `local_session_${new Date().getTime()}`;
-            localStorage.setItem('userId', mockUserId);
-            alert("Could not connect to the backend. Starting a local demo session.");
+            setLoginError(error.message || "Could not connect to the backend. Please try again.");
         } finally {
             setIsLoggingIn(false);
         }
@@ -665,7 +675,7 @@ export default function App() {
 
     // Conditional rendering based on authentication state
     if (isLoggingIn) return <LoadingScreen message="Initializing Session..." />;
-    if (!userId) return <LoginPage onSignIn={handleSignIn} />;
+    if (!userId) return <LoginPage onSignIn={handleSignIn} isLoading={isLoggingIn} error={loginError} />;
     return (
         <>
             <GlobalStyles />
@@ -686,7 +696,7 @@ const LoadingScreen = ({ message }) => (
     </div>
 );
 
-const LoginPage = ({ onSignIn }) => (
+const LoginPage = ({ onSignIn, isLoading, error }) => (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white p-4">
         <div className="absolute inset-0 bg-gradient-to-br from-orange-900/30 via-transparent to-green-900/30 -z-1"></div>
         <div className="text-center">
@@ -694,16 +704,18 @@ const LoginPage = ({ onSignIn }) => (
                  <Scale size={32} className="text-gray-800"/>
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold text-white mb-3">NyayGPT</h1>
-            <p className="text-lg sm:text-xl text-gray-400 mb-12">Your AI-Powered Legal Assistant for India</p>
+            <p className="text-lg sm:text-xl text-gray-400 mb-8">Your AI-Powered Legal Assistant for India</p>
             <div className="flex justify-center">
                 <button
                     onClick={onSignIn}
-                    className="flex items-center justify-center gap-3 bg-gradient-to-r from-orange-500 via-white to-green-600 bg-[length:200%_100%] bg-[0%_0%] hover:bg-[100%_0%] text-gray-800 font-bold py-3 px-8 rounded-xl shadow-lg shadow-white/10 hover:shadow-white/20 transition-all duration-500"
+                    disabled={isLoading}
+                    className="flex items-center justify-center gap-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 transition-all duration-300 transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                    <LogIn size={20} />
-                    <span>Start Session</span>
+                    {isLoading ? <Loader2 className="animate-spin h-5 w-5" /> : <LogIn size={20} />}
+                    <span>{isLoading ? 'Connecting...' : 'Start Session'}</span>
                 </button>
             </div>
+            {error && <p className="text-red-400 mt-4 text-center">{error}</p>}
         </div>
     </div>
 );
@@ -771,6 +783,8 @@ const ChatPage = ({ userId, onSignOut }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isSidebarVisible, setIsSidebarVisible] = useState(window.innerWidth > 768);
     const [openMenuId, setOpenMenuId] = useState(null);
+    const [isChatListLoading, setIsChatListLoading] = useState(true);
+    const [messageError, setMessageError] = useState(null);
 
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
@@ -779,7 +793,12 @@ const ChatPage = ({ userId, onSignOut }) => {
     // Fetch user's chat history
     useEffect(() => {
         if (!userId) return;
-        fetch(`https://ai.noobis.live/chats/${userId}`).then(res => res.json()).then(data => setChats(data.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)))).catch(err => console.error("Error fetching chats:", err));
+        setIsChatListLoading(true);
+        fetch(`https://ai.noobis.live/chats/${userId}`)
+            .then(res => res.json())
+            .then(data => setChats(data.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))))
+            .catch(err => console.error("Error fetching chats:", err))
+            .finally(() => setIsChatListLoading(false));
     }, [userId]);
 
     // Fetch messages for the currently selected chat
@@ -789,7 +808,18 @@ const ChatPage = ({ userId, onSignOut }) => {
             return;
         }
         setIsLoading(true);
-        fetch(`https://ai.noobis.live/chat/${currentChatId}/messages`).then(res => res.json()).then(setMessages).catch(err => console.error("Error fetching messages:", err)).finally(() => setIsLoading(false));
+        setMessageError(null);
+        fetch(`https://ai.noobis.live/chat/${currentChatId}/messages`)
+            .then(res => {
+                if (!res.ok) throw new Error("Failed to load past messages for this chat.");
+                return res.json();
+            })
+            .then(setMessages)
+            .catch(err => {
+                console.error("Error fetching messages:", err);
+                setMessageError(err.message);
+            })
+            .finally(() => setIsLoading(false));
     }, [currentChatId]);
     
     // Responsive sidebar visibility
@@ -848,31 +878,65 @@ const ChatPage = ({ userId, onSignOut }) => {
         }
         
         const userMessage = { role: 'user', content };
-        setMessages(prev => [...prev, userMessage]);
+        setMessages(prev => [...prev, userMessage, { role: 'assistant', content: '' }]);
         setInput('');
         setIsLoading(true);
 
         try {
-            // Mock response for demonstration
-            setTimeout(() => {
-                const assistantMessage = {role: 'assistant', content: `This is a mock response to your message: "${content}"`};
-                setMessages(prev => [...prev, assistantMessage]);
-                if (isFirstMessage) updateChatTitle(chatId);
-                setIsLoading(false);
-            }, 1000);
+            const response = await fetch(`https://ai.noobis.live/chat/${chatId}/message`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: content.trim() })
+            });
+
+            if (!response.ok) throw new Error(`Backend request failed with status: ${response.status}`);
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let done = false;
+
+            while (!done) {
+                const { value, done: readerDone } = await reader.read();
+                done = readerDone;
+                const chunk = decoder.decode(value, { stream: !done });
+                
+                setMessages(prev => {
+                    const updatedMessages = [...prev];
+                    const lastMessage = updatedMessages[prev.length - 1];
+                    if (lastMessage && lastMessage.role === 'assistant') {
+                        updatedMessages[prev.length - 1] = {
+                            ...lastMessage,
+                            content: lastMessage.content + chunk
+                        };
+                        return updatedMessages;
+                    }
+                    return prev;
+                });
+            }
+
+            if (isFirstMessage) updateChatTitle(chatId);
+
         } catch (error) {
             console.error("Error sending message:", error);
-            setMessages(prev => [...prev, { role: 'assistant', content: "I'm sorry, I encountered an error. Please try again." }]);
+            setMessages(prev => {
+                 const updatedMessages = [...prev];
+                 const lastMessage = updatedMessages[prev.length - 1];
+                 if(lastMessage && lastMessage.role === 'assistant' && lastMessage.content === ''){
+                     updatedMessages[prev.length - 1] = { role: 'assistant', content: "I'm sorry, I encountered an error. Please try again." };
+                 } else {
+                     updatedMessages.push({ role: 'assistant', content: "I'm sorry, I encountered an error. Please try again." });
+                 }
+                 return updatedMessages;
+            });
+        } finally {
             setIsLoading(false);
         }
     };
     
     const handlePromptClick = async (prompt) => {
-        // If there's no active chat, create one first
         if (!currentChatId) {
             await handleNewChat();
         }
-        // Set the input field with the prompt text and focus it
         setInput(prompt + ' ');
         inputRef.current?.focus();
     };
@@ -897,6 +961,7 @@ const ChatPage = ({ userId, onSignOut }) => {
     const selectChat = (chatId) => {
         if (currentChatId !== chatId) {
             setCurrentChatId(chatId);
+            setMessageError(null);
         }
         if (window.innerWidth < 768) {
             setIsSidebarVisible(false);
@@ -904,6 +969,59 @@ const ChatPage = ({ userId, onSignOut }) => {
     }
     
     const isNewChat = messages.length === 0 && !input;
+
+    const renderMainContent = () => {
+        if (isLoading && messages.length === 0) {
+            return (
+                <div className="h-full flex items-center justify-center">
+                    <Loader2 className="animate-spin text-white h-8 w-8" />
+                </div>
+            );
+        }
+        if (messageError) {
+             return (
+                <div className="h-full flex flex-col items-center justify-center text-center">
+                    <XCircle className="h-12 w-12 text-red-500 mb-4" />
+                    <h2 className="text-xl font-semibold text-white mb-2">Failed to Load Chat</h2>
+                    <p className="text-gray-400">{messageError}</p>
+                </div>
+            );
+        }
+        if (currentChatId && messages.length > 0) {
+            return (
+                <div className="max-w-3xl mx-auto">
+                    <div className="space-y-8">
+                        {messages.map((msg, index) => (
+                            <div key={index} className={`flex items-start gap-3 sm:gap-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                {msg.role === 'assistant' && (
+                                    <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center shrink-0 bg-gradient-to-br from-orange-500 via-white to-green-600">
+                                        <Bot size={18} className="text-gray-800"/>
+                                    </div>
+                                )}
+                                <div className={`max-w-xl prose prose-invert prose-p:text-gray-300 prose-li:text-gray-300 p-4 rounded-xl ${msg.role === 'user' ? 'bg-green-800/50 rounded-br-none' : 'bg-gray-800/50 rounded-bl-none'}`}>
+                                    <MarkdownRenderer content={msg.content} />
+                                </div>
+                                 {msg.role === 'user' && (
+                                    <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center shrink-0 bg-gradient-to-br from-green-500 to-teal-500">
+                                        <User size={18} />
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                        {isLoading && messages.length > 0 && <div className="flex items-start gap-4"><div className="h-9 w-9 rounded-full bg-gradient-to-br from-orange-500 via-white to-green-600 flex items-center justify-center shrink-0"><Bot size={18} className="text-gray-800"/></div><div className="p-2"><Loader2 className="animate-spin text-white h-6 w-6" /></div></div>}
+                        <div ref={messagesEndRef} />
+                    </div>
+                </div>
+            );
+        }
+        return (
+            <div className="h-full flex items-center justify-center">
+                <div className="w-full">
+                    <InitialPrompts onPromptClick={handlePromptClick} />
+                </div>
+            </div>
+        );
+    };
 
     return (
         <div className="flex h-screen bg-gray-900 text-gray-200 font-sans">
@@ -926,7 +1044,11 @@ const ChatPage = ({ userId, onSignOut }) => {
                     </button>
                 </div>
                 <div className="flex-grow overflow-y-auto p-2 space-y-1">
-                    {chats.map(chat => (
+                    {isChatListLoading ? (
+                        <div className="flex justify-center items-center h-full">
+                            <Loader2 className="animate-spin text-white h-6 w-6" />
+                        </div>
+                    ) : chats.map(chat => (
                         <div key={chat._id} className="relative group">
                             <button onClick={() => selectChat(chat._id)} className={`w-full text-left pl-3 pr-8 py-2.5 rounded-lg flex items-center gap-3 transition-colors relative ${currentChatId === chat._id ? 'bg-white/10 text-white' : 'hover:bg-white/5'}`}>
                                 {currentChatId === chat._id && <div className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 bg-orange-500 rounded-r-full"></div>}
@@ -969,37 +1091,7 @@ const ChatPage = ({ userId, onSignOut }) => {
                 </div>
                 
                 <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-                    {(!currentChatId || messages.length === 0) && !isLoading ? (
-                        <div className="h-full flex items-center justify-center">
-                            <div className="w-full">
-                                <InitialPrompts onPromptClick={handlePromptClick} />
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="max-w-3xl mx-auto">
-                            <div className="space-y-8">
-                                {messages.map((msg, index) => (
-                                    <div key={index} className={`flex items-start gap-3 sm:gap-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                        {msg.role === 'assistant' && (
-                                            <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center shrink-0 bg-gradient-to-br from-orange-500 via-white to-green-600">
-                                                <Bot size={18} className="text-gray-800"/>
-                                            </div>
-                                        )}
-                                        <div className={`max-w-xl prose prose-invert prose-p:text-gray-300 prose-li:text-gray-300 p-4 rounded-xl ${msg.role === 'user' ? 'bg-green-800/50 rounded-br-none' : 'bg-gray-800/50 rounded-bl-none'}`}>
-                                            <MarkdownRenderer content={msg.content} />
-                                        </div>
-                                         {msg.role === 'user' && (
-                                            <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center shrink-0 bg-gradient-to-br from-green-500 to-teal-500">
-                                                <User size={18} />
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
-                                {isLoading && <div className="flex items-start gap-4"><div className="h-9 w-9 rounded-full bg-gradient-to-br from-orange-500 via-white to-green-600 flex items-center justify-center shrink-0"><Bot size={18} className="text-gray-800"/></div><div className="p-2"><Loader2 className="animate-spin text-white h-6 w-6" /></div></div>}
-                                <div ref={messagesEndRef} />
-                            </div>
-                        </div>
-                    )}
+                    {renderMainContent()}
                 </div>
 
                 <div className="p-4 sm:p-6 pt-2 w-full max-w-3xl mx-auto">

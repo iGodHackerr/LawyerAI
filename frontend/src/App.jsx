@@ -722,7 +722,7 @@ const InitialPrompts = ({ onPromptClick }) => {
         { icon: <Sparkles size={24} />, title: "Get legal advice", subtitle: "on a specific situation", color: "from-orange-500 to-amber-400" },
         { icon: <BookOpen size={24} />, title: "Summarize a law", subtitle: "e.g., The IT Act, 2000", color: "from-slate-300 to-gray-100" },
         { icon: <Code size={24} />, title: "Review a document", subtitle: "Check a contract for risks", color: "from-green-500 to-emerald-400" },
-        { icon: <BarChart size={24} />, title: "Explain a legal term", subtitle: "e.g., 'Caveat Emptor'", color: "from-slate-300 to-gray-100" },
+        { icon: <MessageSquare size={24} />, title: "Explain a legal term", subtitle: "e.g., 'Caveat Emptor'", color: "from-blue-500 to-cyan-400" },
     ];
     return (
         <div className="flex flex-col items-center justify-center text-center p-4">

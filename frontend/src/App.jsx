@@ -643,7 +643,7 @@ export default function App() {
     }, []);
 
     // Handles the user sign-in process
-    const handleSignIn = async () => {
+    const handleSignIn = async () =>{
         setIsLoggingIn(true);
         setLoginError(null); // Reset error on new attempt
         try {

@@ -1054,7 +1054,7 @@ const ChatPage = ({ userId, onSignOut }) => {
                     <button onClick={() => setIsSidebarVisible(true)} className="p-2 -ml-2"><Menu size={20} /></button>
                     <div className="flex items-center gap-2">
                         <Scale size={20} className="text-orange-400"/>
-                        <h1 className="text-lg font-bold text-white">NyayGPT</h1>
+                        <h1 className="text-2xl md:text-lg font-bold text-white">NyayGPT</h1>
                     </div>
                      <div className="w-8"></div> {/* Spacer */}
                 </div>

@@ -1,0 +1,36 @@
+{
+  "appTitle": "NayayGPT",
+  "appSubtitle": "Your AI-Powered Legal Assistant for India",
+  "startSession": "Start Session",
+  "connecting": "Connecting...",
+  "howCanIAssist": "How can I assist you today?",
+  "newChat": "New Chat",
+  "userSession": "User Session",
+  "language": "Language",
+  "deleteChat": "Delete Chat",
+  "askLegalQuestion": "Ask a legal question...",
+  "failedToLoadChat": "Failed to Load Chat",
+  "failedToLoadPastMessages": "Failed to load past messages for this chat.",
+  "genericError": "I'm sorry, I encountered an error. Please try again.",
+  "switchTo": "Switch to",
+  "yes": "Yes",
+  "no": "No",
+  "initialPrompts": {
+    "getAdvice": {
+      "title": "Get legal advice",
+      "subtitle": "on a specific situation"
+    },
+    "summarizeLaw": {
+      "title": "Summarize a law",
+      "subtitle": "e.g., The IT Act, 2000"
+    },
+    "reviewDocument": {
+      "title": "Review a document",
+      "subtitle": "Check a contract for risks"
+    },
+    "explainTerm": {
+      "title": "Explain a legal term",
+      "subtitle": "e.g., 'Caveat Emptor'"
+    }
+  }
+}

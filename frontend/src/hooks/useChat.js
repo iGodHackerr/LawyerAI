@@ -6,8 +6,9 @@ import {
     sendMessage,
     deleteChat as apiDeleteChat,
     updateChatTitle as apiUpdateChatTitle
-} from '../services/api';
-import { useLanguage } from '../contexts/LanguageContext';
+} from '../services/api.js';
+import { useLanguage } from '../contexts/LanguageContext.jsx';
+import { useTranslation } from 'react-i18next';
 
 export default function useChat(userId) {
     const [chats, setChats] = useState([]);
@@ -17,6 +18,7 @@ export default function useChat(userId) {
     const [isChatListLoading, setIsChatListLoading] = useState(true);
     const [messageError, setMessageError] = useState(null);
     const { language, supportedLanguages } = useLanguage();
+    const { t } = useTranslation(); // For translating the error message
 
     // Fetch chat list
     useEffect(() => {
@@ -39,7 +41,7 @@ export default function useChat(userId) {
         setMessageError(null);
         fetchMessages(currentChatId)
             .then(res => {
-                if (!res.ok) throw new Error("Failed to load past messages for this chat.");
+                if (!res.ok) throw new Error(t('failedToLoadPastMessages'));
                 return res.json();
             })
             .then(setMessages)
@@ -48,7 +50,7 @@ export default function useChat(userId) {
                 setMessageError(err.message);
             })
             .finally(() => setIsLoading(false));
-    }, [currentChatId]);
+    }, [currentChatId, t]);
 
     const handleNewChat = useCallback(async () => {
         try {
@@ -91,9 +93,13 @@ export default function useChat(userId) {
         setIsLoading(true);
 
         try {
-            // The language name (e.g., "Hindi") is sent as an instruction.
-            const languageName = supportedLanguages[language].split(' ')[0];
-            const response = await sendMessage(chatId, content.trim(), languageName);
+            let finalContent = content.trim();
+            if (language !== 'en' && supportedLanguages[language]) {
+                const languageName = supportedLanguages[language];
+                finalContent = `Please respond ONLY in the ${languageName} language. Do not use any other language. The user's query is: "${content.trim()}"`;
+            }
+
+            const response = await sendMessage(chatId, finalContent);
 
             if (!response.ok) throw new Error(`Backend request failed with status: ${response.status}`);
 
@@ -104,11 +110,11 @@ export default function useChat(userId) {
 
         } catch (error) {
             console.error("Error sending message:", error);
-            setMessages(prev => [...prev, { role: 'assistant', content: "I'm sorry, I encountered an error. Please try again." }]);
+            setMessages(prev => [...prev, { role: 'assistant', content: t('genericError') }]);
         } finally {
             setIsLoading(false);
         }
-    }, [currentChatId, isLoading, messages.length, handleNewChat, updateChatTitle, language, supportedLanguages]);
+    }, [currentChatId, isLoading, messages.length, handleNewChat, updateChatTitle, language, supportedLanguages, t]);
 
     const handleDeleteChat = useCallback(async (chatIdToDelete) => {
         const originalChats = [...chats];
@@ -133,16 +139,7 @@ export default function useChat(userId) {
     };
 
     return {
-        chats,
-        currentChatId,
-        messages,
-        isLoading,
-        isChatListLoading,
-        messageError,
-        handleNewChat,
-        handleSendMessage,
-        handleDeleteChat,
-        selectChat,
-        setMessages,
+        chats, currentChatId, messages, isLoading, isChatListLoading, messageError,
+        handleNewChat, handleSendMessage, handleDeleteChat, selectChat, setMessages,
     };
 }

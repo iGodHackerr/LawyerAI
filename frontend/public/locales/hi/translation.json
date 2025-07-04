@@ -1,0 +1,36 @@
+{
+  "appTitle": "न्यायGPT",
+  "appSubtitle": "भारत के लिए आपका एआई-संचालित कानूनी सहायक",
+  "startSession": "सत्र शुरू करें",
+  "connecting": "कनेक्ट हो रहा है...",
+  "howCanIAssist": "मैं आज आपकी कैसे सहायता कर सकता हूँ?",
+  "newChat": "नई चैट",
+  "userSession": "उपयोगकर्ता सत्र",
+  "language": "भाषा",
+  "deleteChat": "चैट हटाएं",
+  "askLegalQuestion": "कानूनी प्रश्न पूछें...",
+  "failedToLoadChat": "चैट लोड करने में विफल",
+  "failedToLoadPastMessages": "इस चैट के पिछले संदेश लोड करने में विफल।",
+  "genericError": "मुझे क्षमा करें, मुझे एक त्रुटि का सामना करना पड़ा। कृपया पुनः प्रयास करें।",
+  "switchTo": "भाषा बदलें",
+  "yes": "हाँ",
+  "no": "नहीं",
+  "initialPrompts": {
+    "getAdvice": {
+      "title": "कानूनी सलाह लें",
+      "subtitle": "एक विशिष्ट स्थिति पर"
+    },
+    "summarizeLaw": {
+      "title": "कानून का सारांश दें",
+      "subtitle": "उदा., आईटी अधिनियम, 2000"
+    },
+    "reviewDocument": {
+      "title": "दस्तावेज़ की समीक्षा करें",
+      "subtitle": "जोखिमों के लिए अनुबंध की जाँच करें"
+    },
+    "explainTerm": {
+      "title": "कानूनी शब्द समझाएं",
+      "subtitle": "उदा., 'क्रेता सावधान'"
+    }
+  }
+}

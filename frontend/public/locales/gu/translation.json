@@ -1,0 +1,36 @@
+{
+  "appTitle": "ન્યાયGPT",
+  "appSubtitle": "ભારત માટે તમારા AI-સંચાલિત કાનૂની સહાયક",
+  "startSession": "સત્ર શરૂ કરો",
+  "connecting": "કનેક્ટ કરી રહ્યું છે...",
+  "howCanIAssist": "હું આજે તમારી કેવી રીતે મદદ કરી શકું?",
+  "newChat": "નવી ચેટ",
+  "userSession": "વપરાશકર્તા સત્ર",
+  "language": "ભાષા",
+  "deleteChat": "ચેટ કાઢી નાખો",
+  "askLegalQuestion": "કાનૂની પ્રશ્ન પૂછો...",
+  "failedToLoadChat": "ચેટ લોડ કરવામાં નિષ્ફળ",
+  "failedToLoadPastMessages": "આ ચેટ માટેના ભૂતકાળના સંદેશા લોડ કરવામાં નિષ્ફળ.",
+  "genericError": "મને માફ કરશો, મને એક ભૂલ આવી. કૃપા કરીને ફરી પ્રયાસ કરો.",
+  "switchTo": "ભાષા બદલો",
+  "yes": "હા",
+  "no": "ના",
+  "initialPrompts": {
+    "getAdvice": {
+      "title": "કાનૂની સલાહ મેળવો",
+      "subtitle": "ચોક્કસ પરિસ્થિતિ પર"
+    },
+    "summarizeLaw": {
+      "title": "કાયદાનો સારાંશ આપો",
+      "subtitle": "દા.ત., IT એક્ટ, 2000"
+    },
+    "reviewDocument": {
+      "title": "દસ્તાવેજની સમીક્ષા કરો",
+      "subtitle": "જોખમો માટે કરાર તપાસો"
+    },
+    "explainTerm": {
+      "title": "કાનૂની શબ્દ સમજાવો",
+      "subtitle": "દા.ત., 'કેવિએટ એમ્પ્ટર'"
+    }
+  }
+}

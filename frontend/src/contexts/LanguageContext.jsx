@@ -1,42 +1,30 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { getLanguageByIp } from '../services/api';
+import { useTranslation } from 'react-i18next';
+import { getLanguageByIp } from '../services/api.js';
 
-// Create a context for the language
 const LanguageContext = createContext();
 
-// A list of supported Indian languages
 export const supportedLanguages = {
-    'en': 'English',
-    'hi': 'हिन्दी (Hindi)',
-    'bn': 'বাংলা (Bengali)',
-    'te': 'తెలుగు (Telugu)',
-    'mr': 'मराठी (Marathi)',
-    'ta': 'தமிழ் (Tamil)',
-    'gu': 'ગુજરાતી (Gujarati)',
-    'kn': 'ಕನ್ನಡ (Kannada)',
-    'ml': 'മലയാളം (Malayalam)',
+    'en': 'English', 'hi': 'हिन्दी (Hindi)', 'bn': 'বাংলা (Bengali)',
+    'te': 'తెలుగు (Telugu)', 'mr': 'मराठी (Marathi)', 'ta': 'தமிழ் (Tamil)',
+    'gu': 'ગુજરાતી (Gujarati)', 'kn': 'ಕನ್ನಡ (Kannada)', 'ml': 'മലയാളം (Malayalam)',
     'pa': 'ਪੰਜਾਬੀ (Punjabi)',
 };
 
 export const LanguageProvider = ({ children }) => {
-    const [language, setLanguage] = useState('en'); // Default to English
+    const { i18n } = useTranslation();
     const [showSuggestion, setShowSuggestion] = useState(false);
     const [suggestedLanguage, setSuggestedLanguage] = useState(null);
 
-    // Effect to detect language from IP on initial load
     useEffect(() => {
         const detectLanguage = async () => {
+            // Don't show suggestion if user has already set a language or dismissed it
+            if (localStorage.getItem('i18nextLng') || localStorage.getItem('languageSuggestionDismissed')) {
+                return;
+            }
             try {
-                // Check if a language is already set by the user
-                const savedLanguage = localStorage.getItem('userLanguage');
-                if (savedLanguage && supportedLanguages[savedLanguage]) {
-                    setLanguage(savedLanguage);
-                    return;
-                }
-                
-                // Fetch language based on IP
                 const langCode = await getLanguageByIp();
-                if (langCode && supportedLanguages[langCode] && langCode !== 'en') {
+                if (langCode && supportedLanguages[langCode] && langCode !== i18n.language) {
                     setSuggestedLanguage({ code: langCode, name: supportedLanguages[langCode] });
                     setShowSuggestion(true);
                 }
@@ -44,27 +32,24 @@ export const LanguageProvider = ({ children }) => {
                 console.error("IP-based language detection failed:", error);
             }
         };
-
-        detectLanguage();
-    }, []);
+        // Wait a moment before checking, to allow i18next to load the stored language
+        setTimeout(detectLanguage, 500);
+    }, [i18n.language]);
 
     const changeLanguage = (langCode) => {
         if (supportedLanguages[langCode]) {
-            setLanguage(langCode);
-            localStorage.setItem('userLanguage', langCode); // Persist user's choice
-            setShowSuggestion(false); // Hide suggestion after a choice is made
+            i18n.changeLanguage(langCode); // This will trigger a re-render with the new language
+            setShowSuggestion(false);
         }
     };
     
     const dismissSuggestion = () => {
         setShowSuggestion(false);
-        // Optionally, we can set a flag in localStorage to not show it again
         localStorage.setItem('languageSuggestionDismissed', 'true');
     };
 
-
     const value = {
-        language,
+        language: i18n.language,
         changeLanguage,
         supportedLanguages,
         showSuggestion,
@@ -79,7 +64,6 @@ export const LanguageProvider = ({ children }) => {
     );
 };
 
-// Custom hook to use the language context easily
 export const useLanguage = () => {
     return useContext(LanguageContext);
 };

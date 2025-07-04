@@ -1,0 +1,36 @@
+{
+  "appTitle": "न्यायGPT",
+  "appSubtitle": "तुमचा एआय-चालित कायदेशीर सहाय्यक",
+  "startSession": "सत्र सुरू करा",
+  "connecting": "कनेक्ट करत आहे...",
+  "howCanIAssist": "आज मी तुमची कशी मदत करू शकतो?",
+  "newChat": "नवीन चॅट",
+  "userSession": "वापरकर्ता सत्र",
+  "language": "भाषा",
+  "deleteChat": "चॅट हटवा",
+  "askLegalQuestion": "कायदेशीर प्रश्न विचारा...",
+  "failedToLoadChat": "चॅट लोड करण्यात अयशस्वी",
+  "failedToLoadPastMessages": "या चॅटसाठी मागील संदेश लोड करण्यात अयशस्वी.",
+  "genericError": "मला माफ करा, मला एक त्रुटी आली. कृपया पुन्हा प्रयत्न करा.",
+  "switchTo": "भाषा बदला",
+  "yes": "होय",
+  "no": "नाही",
+  "initialPrompts": {
+    "getAdvice": {
+      "title": "कायदेशीर सल्ला मिळवा",
+      "subtitle": "एका विशिष्ट परिस्थितीवर"
+    },
+    "summarizeLaw": {
+      "title": "कायद्याचा सारांश द्या",
+      "subtitle": "उदा., आयटी कायदा, २०००"
+    },
+    "reviewDocument": {
+      "title": "दस्तऐवजाचे पुनरावलोकन करा",
+      "subtitle": " जोखमींसाठी कराराची तपासणी करा"
+    },
+    "explainTerm": {
+      "title": "कायदेशीर संज्ञा स्पष्ट करा",
+      "subtitle": "उदा., 'केव्हिएट एम्प्टर'"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "appTitle": "ਨਿਆਂGPT",
+  "appSubtitle": "ਤੁਹਾਡਾ ਏਆਈ-ਸੰਚਾਲਿਤ ਕਾਨੂੰਨੀ ਸਹਾਇਕ",
+  "startSession": "ਸੈਸ਼ਨ ਸ਼ੁਰੂ ਕਰੋ",
+  "connecting": "ਕਨੈਕਟ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...",
+  "howCanIAssist": "ਮੈਂ ਅੱਜ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ?",
+  "newChat": "ਨਵੀਂ ਗੱਲਬਾਤ",
+  "userSession": "ਉਪਭੋਗਤਾ ਸੈਸ਼ਨ",
+  "language": "ਭਾਸ਼ਾ",
+  "deleteChat": "ਗੱਲਬਾਤ ਮਿਟਾਓ",
+  "askLegalQuestion": "ਇੱਕ ਕਾਨੂੰਨੀ ਸਵਾਲ ਪੁੱਛੋ...",
+  "failedToLoadChat": "ਚੈਟ ਲੋਡ ਕਰਨ ਵਿੱਚ ਅਸਫਲ",
+  "failedToLoadPastMessages": "ਇਸ ਚੈਟ ਲਈ ਪਿਛਲੇ ਸੁਨੇਹੇ ਲੋਡ ਕਰਨ ਵਿੱਚ ਅਸਫਲ।",
+  "genericError": "ਮੈਨੂੰ ਮਾਫ਼ ਕਰਨਾ, ਮੈਨੂੰ ਇੱਕ ਗਲਤੀ ਆਈ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+  "switchTo": "ਭਾਸ਼ਾ ਬਦਲੋ",
+  "yes": "ਹਾਂ",
+  "no": "ਨਹੀਂ",
+  "initialPrompts": {
+    "getAdvice": {
+      "title": "ਕਾਨੂੰਨੀ ਸਲਾਹ ਲਓ",
+      "subtitle": "ਇੱਕ ਖਾਸ ਸਥਿਤੀ 'ਤੇ"
+    },
+    "summarizeLaw": {
+      "title": "ਇੱਕ ਕਾਨੂੰਨ ਦਾ ਸਾਰ ਦਿਓ",
+      "subtitle": "ਜਿਵੇਂ ਕਿ, ਆਈਟੀ ਐਕਟ, 2000"
+    },
+    "reviewDocument": {
+      "title": "ਇੱਕ ਦਸਤਾਵੇਜ਼ ਦੀ ਸਮੀਖਿਆ ਕਰੋ",
+      "subtitle": "ਖਤਰਿਆਂ ਲਈ ਇਕਰਾਰਨਾਮੇ ਦੀ ਜਾਂਚ ਕਰੋ"
+    },
+    "explainTerm": {
+      "title": "ਇੱਕ ਕਾਨੂੰਨੀ ਸ਼ਬਦ ਦੀ ਵਿਆਖਿਆ ਕਰੋ",
+      "subtitle": "ਜਿਵੇਂ ਕਿ, 'ਖਰੀਦਦਾਰ ਸਾਵਧਾਨ'"
+    }
+  }
+}

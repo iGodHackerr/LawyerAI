@@ -45,14 +45,14 @@ const MessageActions = ({ text }) => {
             >
                 {hasCopied ? <Check size={16} className="text-green-400" /> : <Copy size={16} />}
             </button>
-            <button
+            {/* <button
                 onClick={handleSpeak}
                 disabled={isLoading}
                 className="p-1.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors disabled:cursor-not-allowed"
                 aria-label="Read message aloud"
             >
                 {isLoading ? <Loader2 size={16} className="animate-spin text-orange-400" /> : <Volume2 size={16} />}
-            </button>
+            </button> */}
             {error && <div title={error} className="text-red-500 text-xs p-1">!</div>}
         </div>
     );
